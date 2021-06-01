@@ -1,0 +1,179 @@
+<pre class='metadata'>
+Title: Data pod for a decentralized Web network
+Shortname: Data pod
+Level: 1
+Status: LS
+URL: https://mellonscholarlycommunication.github.io/spec-datapod
+Editor: Ruben Dedecker, Ghent University, ruben.dedecker@ugent.be
+Editor: Miel Vander Sande, meemoo - [Flemish Institute for Archiving](https://meemoo.be), miel.vandersande@meemoo.be
+Editor: Patrick Hochstenbach, Ghent University, patrick.hochstenbach@ugent.be
+Editor: Jeroen Werbrouck, Ghent University, Jeroen.Werbrouck@ugent.be
+Abstract: This specification describes the implementation requirements for the Ochestrator component.
+Markup Shorthands: markdown yes
+</pre>
+
+<style>
+table {
+  margin: 25px auto;
+  border-collapse: collapse;
+  border: 1px solid #eee;
+  border-bottom: 2px solid #005A9C;
+}
+table tr:hover {
+  background: #f4f4f4;
+}
+table tr:hover td {
+  color: #555;
+}
+table th, table td {
+  color: #999;
+  border: 1px solid #eee;
+  padding: 12px 12px;
+  border-collapse: collapse;
+}
+table th {
+  background: #005A9C;
+  color: #fff;
+}
+table th.last {
+  border-right: none;
+}
+</style>
+
+Set of documents {#set}
+=======================
+
+This document is one of the specifications produced by the **ResearcherPod** and **ErfgoedPod** project:
+
+1. [Overview](/spec-overview/)
+2. [Orchestrator](/spec-orchestrator/) 
+3. [Data Pod](/spec-datapod/) (this document)
+4. [Rule language](/spec-rulelanguage/)
+5. [Artefact Lifecycle Event Log](/spec-eventlog/)
+6. [Notifications](/spec-notifications/)
+
+Introduction {#intro}
+=====================
+
+In a [Solid decentralized network](https://solidproject.org/), data is stored in a distributed network of data pods.
+These data pods are used to store a variety of resources, that are available over the Web with unique identifiers.
+This document outlines the requirements for a data pod to participate in a decentralized network .
+
+The remainder of this document specifies the requirements for implementing an [=Solid Pod=] component.
+
+# Definitions
+
+This document uses the following defined terms from [[spec-overview]]:
+
+- <dfn export>Actor</dfn>
+- <dfn export>Artefact</dfn>
+- <dfn export>Maintainer</dfn>
+- <dfn export>Data Pod</dfn>
+- <dfn export>Inbox</dfn>
+- <dfn export>Artefact Lifecycle Event Log</dfn>
+- <dfn export>Service Hub</dfn>
+- <dfn export>Policy</dfn>
+- <dfn export>Dashboard</dfn>
+
+High-level overview {#high-level}
+=================================
+A [=Data pod=] is a platform that enables actors in the network to store resources and publish them to the network.
+[=Actors=] in the network use these platforms to store their [=artefacts=], receive notifications from other actors in their [=inbox=], and store their [=policies=].
+
+
+
+Creating a data pod {#data-pod-creation}
+========================================
+
+## Deployment ## {#data-pod-deployment}
+A data pod MUST be deployable as a <dfn export>local background process</dfn> or as a <dfn export>remote web service</dfn>. 
+In the case of the latter, an actor in the network MUST be able to create their own data pod using this web service.
+
+
+
+
+Resource storage {#resource-storage}
+====================================
+A data pod in the network MUST provide functionality to store and publish resources on the network.
+In this section, we assume all actors have the correct permissions set where not explicitly mentioned.
+
+## Adding resources ## {#adding-resources}
+A data pod MUST provide an interface over the Web that enables actors to add new resources to the data pod.
+These added resources MUST be available for other actors on the network with the correct permissions set.
+The data pod SHOULD support adding both RDF and non-RDF resources.
+
+## Storing resource metadata ## {#adding-resources}
+The data pod MUST be able to store metadata related to resources.
+This metadata MUST be findable on retrieval of the resource.
+Adding and retrieving metadata MUST be available for both RDF and non-RDF resources, depending on which data types can be added to the data pod.
+
+## Updating resources ## {#updating-resources}
+A data pod MUST provide an interface over the Web that enables actors to update resources on the data pod.
+The updated resource MUST be available for all actors in the network.
+The data pod MAY create [=mementos=] of the old version of the resource, and make this available using the [resource versioning](#resource-versioning).
+
+
+Resource Versioning {#resource-versioning}
+==========================================
+The data pod platform MAY provide functionality for resource versioning.
+If stored resources provide inherent versioning functionality, this may be mimicked by the data pod.
+Resource versioning on the data pod is handled using the [memento protocol](http://mementoweb.org/guide/quick-intro/).
+
+An example implementation of resource versioning using the [=memento protocol=] in a data pod setting can be found in the [fedora API Specification](https://fcrepo.github.io/fcrepo-specification/#resource-versioning).
+
+
+Notifiations {#notifications}
+=============================
+Notifications are handled using the [Linked Data Notifications Specification](https://www.w3.org/TR/ldn/).
+A data pod MUST be a valid [Linked Data Notifications Receiver](https://www.w3.org/TR/ldn/#receiver).
+All inboxes defined on the data pod MUST support GET and POST requests on the Inbox URL. 
+
+
+
+Implementation {#implementation}
+================================
+
+<pre class=biblio>
+{
+	"solid-oidc": {
+		"authors": [
+			"Aaron Coburn (Inrupt)",
+			"elf Pavlik",
+			"Dmitri Zagidulin"
+		],
+		"href": "https://solid.github.io/authentication-panel/solid-oidc/",
+		"title": "SOLID-OIDC",
+		"status": "Editor’s Draft",
+		"publisher": "Solid project",
+		"deliveredBy": [
+			"https://www.w3.org/community/solid/"
+		]
+	},
+	"solid-protocol": {
+		"authors": [
+			"Sarven Capadisli",
+			"Tim Berners-Lee",
+			"Ruben Verborgh",
+			"Kjetil Kjernsmo",
+			"Justin Bingham",
+			"Dmitri Zagidulin"
+		],
+		"href": "https://solidproject.org/TR/protocol/",
+		"title": "The Solid Protocol",
+		"status": "Editor’s Draft",
+		"publisher": "Solid project",
+		"deliveredBy": [
+			"https://www.w3.org/community/solid/"
+		]
+	},
+  "spec-overview": {
+		"authors": [
+      "Miel Vander Sande"
+    ],
+		"href": "http://mellonscholarlycommunication.github.io/spec-overview/",
+		"title": "Overview of the ResearcherPod specifications",
+		"status": "Editor’s Draft",
+		"publisher": "ResearcherPod project"
+	}
+}
+</pre>
