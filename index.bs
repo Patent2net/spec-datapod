@@ -2,7 +2,7 @@
 Title: Data pod for a decentralized Web network
 Shortname: Data pod
 Level: 1
-Status: LS
+Status: LD
 URL: https://mellonscholarlycommunication.github.io/spec-datapod
 Editor: Ruben Dedecker, Ghent University, ruben.dedecker@ugent.be
 Editor: Miel Vander Sande, meemoo - [Flemish Institute for Archiving](https://meemoo.be), miel.vandersande@meemoo.be
@@ -51,6 +51,7 @@ This document is one of the specifications produced by the **ResearcherPod** and
 4. [Rule language](/spec-rulelanguage/)
 5. [Artefact Lifecycle Event Log](/spec-eventlog/)
 6. [Notifications](/spec-notifications/)
+7. [Collector](/spec-collector/)
 
 Introduction {#intro}
 =====================
