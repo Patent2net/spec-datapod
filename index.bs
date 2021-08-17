@@ -43,7 +43,7 @@ table th.last {
 Set of documents {#set}
 =======================
 
-This document is one of the specifications produced by the **ResearcherPod** and **ErfgoedPod** project:
+This document is one of the specifications produced by the **Mellon** and **ErfgoedPod** project:
 
 1. [Overview](/spec-overview/)
 2. [Orchestrator](/spec-orchestrator/) 
@@ -54,12 +54,10 @@ This document is one of the specifications produced by the **ResearcherPod** and
 
 Introduction {#intro}
 =====================
-
 In a [Solid decentralized network](https://solidproject.org/), data is stored in a distributed network of data pods.
-These data pods are used to store a variety of resources, that are available over the Web with unique identifiers.
-This document outlines the requirements for a data pod to participate in a decentralized network .
-
-The remainder of this document specifies the requirements for implementing an [=Solid Pod=] component.
+Data stored on these data pods is made available over the Web with unique identifiers, enabling other actors and applications on the network to interact with the available resources without the need for a centralized service.
+If we want to keep track of the lifecycle and interactions for the published resources on a data pod, requirements have to be specified for any data pod implementation to support this functionality.
+In this document, we define the required functionality for a data pod implementation that can incorporate [=Event=] information for all published resources on the data pod.
 
 # Definitions
 
@@ -77,61 +75,73 @@ This document uses the following defined terms from [[spec-overview]]:
 
 High-level overview {#high-level}
 =================================
-A [=Data pod=] is a platform that enables actors in the network to store resources and publish them to the network.
-[=Actors=] in the network use these platforms to store their [=artefacts=], receive notifications from other actors in their [=inbox=], and store their [=policies=].
-
-
+A [=Solid=] [=Data pod=] is a personal data space on the Web.
+An actor can use this data space to store and share resources over the Web, and receive notifications from other actors in an advertised [=inbox=] resource directory.
+To track the the lifecycle and its interactions of resources published on a data pod in decentralized networks, a data pod implementation must provide functionality for the storage and discovery of these events for their respective resources.
+In [](#resource-storage), we define the base requirements for the storage of resources on the network.
+In [](#resource-versioning), we define how resource versioning can be handled on the data pod.
+In [](#eventlog), the requirements are defined for the storage and discovery of an Event Log for a given resource on the data pod.
 
 Creating a data pod {#data-pod-creation}
 ========================================
-
-## Deployment ## {#data-pod-deployment}
-A data pod MUST be deployable as a <dfn export>local background process</dfn> or as a <dfn export>remote web service</dfn>. 
+A Solid data pod MUST be deployable as a <dfn export>local background process</dfn> or as a <dfn export>remote web service</dfn>. 
+In the case that a data pod is deployed as a local process, the data pod instance should be connected to the Web at all times if the data pod should be discoverable permanently in the network.
 In the case of the latter, an actor in the network MUST be able to create their own data pod using this web service.
-
 
 
 
 Resource storage {#resource-storage}
 ====================================
-A data pod in the network MUST provide functionality to store and publish resources on the network.
-In this section, we assume all actors have the correct permissions set where not explicitly mentioned.
 
-## Adding resources ## {#adding-resources}
-A data pod MUST provide an interface over the Web that enables actors to add new resources to the data pod.
-These added resources MUST be available for other actors on the network with the correct permissions set.
-The data pod SHOULD support adding both RDF and non-RDF resources.
+## indexing ## {#indexing}
+Any resource stored on the data pod should be included in an index on the data pod to enable discovery of the resources by applications and actors in the network.
+A first indexing method is to make use of a [Type Index](https://github.com/solid/solid/blob/main/proposals/data-discovery.md).
+By indexing the resources in a public type index, actors and applications in the network can discover resources of a specific type.
+A second method is to index the resources using a [Shape Tree](https://shapetrees.org/).
+The shape tree specification defines where resources matching a specific shape are stored on the data pod.
+By parsing the available shape tree, any actor or application on the network can discover resources for a specific shape.
 
-## Storing resource metadata ## {#adding-resources}
-The data pod MUST be able to store metadata related to resources.
-This metadata MUST be findable on retrieval of the resource.
-Adding and retrieving metadata MUST be available for both RDF and non-RDF resources, depending on which data types can be added to the data pod.
-
-## Updating resources ## {#updating-resources}
-A data pod MUST provide an interface over the Web that enables actors to update resources on the data pod.
-The updated resource MUST be available for all actors in the network.
-The data pod MAY create [=mementos=] of the old version of the resource, and make this available using the [resource versioning](#resource-versioning).
-
+## metadata ## {#metadata}
+The storage of resource metadata for non-RDF resources is desirable on a Solid Pod implementation.
+Resource metadata can be added to non-RDF resources by creating a resource with the .meta extension, according to the [Solid specification](https://github.com/solid/solid-spec).
 
 Resource Versioning {#resource-versioning}
 ==========================================
-The data pod platform MAY provide functionality for resource versioning.
-If stored resources provide inherent versioning functionality, this may be mimicked by the data pod.
-Resource versioning on the data pod is handled using the [memento protocol](http://mementoweb.org/guide/quick-intro/).
+The data pod may provide functionality to support versioning of stored resources.
+Support for such versioning is not built in to the Solid specification.
+Resource versioning in a Solid pod environment can be implemented according to the definition by the [Fedora API specification](https://fedora.info/2021/05/01/spec/#resource-versioning) which is based on the [=memento=] protocol.
+In cases where it is important to be able to reference specific versions of a resource, versioning may be handled by generating a new URI for different resource versions.
+Version linking can be handled using the DCAT vocabulary, by adding the versioning information directly to the resource in the case of an RDF resourcem, or to the metdata resource in case of non-RDF resources.
 
-An example implementation of resource versioning using the [=memento protocol=] in a data pod setting can be found in the [fedora API Specification](https://fcrepo.github.io/fcrepo-specification/#resource-versioning).
-
+Resource Event Information {#resource-events}
+=============================================
+The data pod may provide functionality to store [=Event=] data related to resources stored on the data pod.
+To provide this functionality, the data pod must implement the [Event Log](/spec-eventlog/) specification.
+This specification dictates how event related data must be stored on the data pod, and how it can be discovered by external actors in the network.
 
 Notifiations {#notifications}
 =============================
-Notifications are handled using the [Linked Data Notifications Specification](https://www.w3.org/TR/ldn/).
-A data pod MUST be a valid [Linked Data Notifications Receiver](https://www.w3.org/TR/ldn/#receiver).
-All inboxes defined on the data pod MUST support GET and POST requests on the Inbox URL. 
+In the Solid ecosystem, notifications serve as the main communication mechanism in a network of Solid Pods.
+These notifications follow the [Linked Data Notifications Specification](https://www.w3.org/TR/ldn/) (LDN).
+Any Solid pod in the network serves as an LDN [=Receiver=], and consequently has the ability to receive notifications from any actor in the network.
+By defining an inbox on a resource, notifications for different resources can be directed towards different inboxes defined on the data pod.
+The actor managing the Solid pod may choose to manually process the incoming notifications or can automate this process through an external [=Orchestrator=] service.
+A Linked Data Notification has no guarantee of any response being given or any action being undertaken.
+Any action required on receiving specific notifications has to be defined and enforced separately.
 
 
+Spec roadmap {#roadmap}
+====================================
+## September ## {#roadmap-september}
 
-Implementation {#implementation}
-================================
+1. work out requirements for resource versioning in Solid.
+	- Is time based versioning useful for our usecases?
+	- What is the best approach to version taggin for specific resources and discovery?
+	- How can we make sure events can be tagged for specific resource versions even on remote actors?
+
+2. Work out data discovery more.
+	- work out requirement for shape trees according to the interop spec
+
 
 
 <pre class=biblio>
