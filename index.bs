@@ -81,7 +81,8 @@ An actor can use this data space to store and share resources over the Web, and 
 To track the the lifecycle and its interactions of resources published on a data pod in decentralized networks, a data pod implementation must provide functionality for the storage and discovery of these events for their respective resources.
 In [](#resource-storage), we define the base requirements for the storage of resources on the network.
 In [](#resource-versioning), we define how resource versioning can be handled on the data pod.
-In [](#eventlog), the requirements are defined for the storage and discovery of an Event Log for a given resource on the data pod.
+In [](#resource-events), the requirements are defined for the storage and discovery of an Event Log for a given resource on the data pod.
+In [](#notifications), the requirement is defined for the data pod to be a [Linked Data Notification](https://www.w3.org/TR/ldn/) Receiver.
 
 Creating a data pod {#data-pod-creation}
 ========================================
@@ -119,6 +120,7 @@ Resource Event Information {#resource-events}
 The data pod may provide functionality to store [=Event=] data related to resources stored on the data pod.
 To provide this functionality, the data pod must implement the [Event Log](/spec-eventlog/) specification.
 This specification dictates how event related data must be stored on the data pod, and how it can be discovered by external actors in the network.
+
 
 Notifiations {#notifications}
 =============================
