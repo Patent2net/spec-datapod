@@ -8,7 +8,6 @@ Editor: Ruben Dedecker, [IDLab - Ghent University](https://knows.idlab.ugent.be)
 Editor: Miel Vander Sande, [meemoo - Flemish Institute for Archives](https://meemoo.be), miel.vandersande@meemoo.be
 Editor: Patrick Hochstenbach, [IDLab - Ghent University](https://knows.idlab.ugent.be), patrick.hochstenbach@ugent.be
 Editor: Jeroen Werbrouck, [IDLab - Ghent University](https://knows.idlab.ugent.be), Jeroen.Werbrouck@ugent.be
-Editor: Herbert Van de Sompel, [DANS + Ghent University](https://dans.knaw.nl/nl/), hvdesomp@gmail.com
 Abstract: This specification describes the implementation requirements for the Ochestrator component.
 Markup Shorthands: markdown yes
 </pre>
@@ -192,3 +191,8 @@ Spec roadmap {#roadmap}
 	}
 }
 </pre>
+
+# Acknowledgement
+
+We thank Herbert Van de Sompel, [DANS + Ghent University](https://dans.knaw.nl/nl/), hvdesomp@gmail.com
+for the valuable input during this project.
