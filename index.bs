@@ -7,8 +7,7 @@ URL: https://mellonscholarlycommunication.github.io/spec-datapod
 Editor: Ruben Dedecker, [IDLab - Ghent University](https://knows.idlab.ugent.be), ruben.dedecker@ugent.be
 Editor: Miel Vander Sande, [meemoo - Flemish Institute for Archives](https://meemoo.be), miel.vandersande@meemoo.be
 Editor: Patrick Hochstenbach, [IDLab - Ghent University](https://knows.idlab.ugent.be), patrick.hochstenbach@ugent.be
-Editor: Jeroen Werbrouck, [IDLab - Ghent University](https://knows.idlab.ugent.be), Jeroen.Werbrouck@ugent.be
-Abstract: This specification describes the implementation requirements for the Ochestrator component.
+Abstract: This specification describes the implementation requirements for a Solid based Data Node component.
 Markup Shorthands: markdown yes
 </pre>
 
