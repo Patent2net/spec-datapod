@@ -1,0 +1,193 @@
+<pre class='metadata'>
+Title : Data pod pour un réseau Web décentralisé
+Shortname : Data pod
+Level : 1
+Status : LD
+URL : https://mellonscholarlycommunication.github.io/spec-datapod
+Editor : Ruben Dedecker, [IDLab - Université de Gand](https://knows.idlab.ugent.be), ruben.dedecker@ugent.be
+Editor : Miel Vander Sande, [meemoo - Institut flamand pour les archives](https://meemoo.be), miel.vandersande@meemoo.be
+Editor : Patrick Hochstenbach, [IDLab - Université de Gand](https://knows.idlab.ugent.be), patrick.hochstenbach@ugent.be
+!Translator : David Reymond
+Abstract : Cette spécification décrit les exigences d'implémentation pour un composant de nœud de données basé sur Solid.
+Markup Shorthands : markdown yes
+</pre>
+
+<style>
+table {
+	margin: 25px auto;
+	border-collapse: collapse;
+	border: 1px solid #eee;
+	border-bottom: 2px solid #005A9C;
+}
+table tr:hover {
+	background: #f4f4f4;
+}
+table tr:hover td {
+	color: #555;
+}
+table th, table td {
+	color: #999;
+	border: 1px solid #eee;
+	padding: 12px 12px;
+	border-collapse: collapse;
+}
+table th {
+	background: #005A9C;
+	color: #fff;
+}
+table th.last {
+	border-right: none;
+}
+</style>
+
+Ensemble de documents {#set}
+=======================
+
+Ce document fait partie des spécifications produites par les projets **Mellon** et **ErfgoedPod** :
+
+1. [Aperçu](/spec-overview/)
+2. [Orchestrator](/spec-orchestrator/) 
+3. [Data Pod](/spec-datapod/) (ce document)
+4. [Langage de règles](/spec-rulelanguage/)
+5. [Journal des événements du cycle de vie de l'artefact](/spec-eventlog/)
+6. [Notifications](/spec-notifications/)
+7. [Collecteur](/spec-collector/)
+
+Introduction {#intro}
+=====================
+Dans un [réseau décentralisé Solid](https://solidproject.org/), les données sont stockées dans un réseau distribué de data pods.
+Les données stockées sur ces data pods sont rendues disponibles sur le Web avec des identifiants uniques, permettant à d'autres acteurs et applications sur le réseau d'interagir avec les ressources disponibles sans avoir besoin d'un service centralisé.
+Si nous voulons suivre le cycle de vie et les interactions des ressources publiées sur un data pod dans des réseaux décentralisés, des exigences doivent être spécifiées pour que toute implémentation de data pod prenne en charge cette fonctionnalité.
+Dans ce document, nous définissons la fonctionnalité requise pour une implémentation de data pod qui peut incorporer les informations d'[[=Event=]] pour toutes les ressources publiées sur le data pod.
+
+# Définitions
+
+Ce document utilise les termes définis suivants de [[spec-overview]] :
+
+- <dfn export>Acteur</dfn>
+- <dfn export>Artefact</dfn>
+- <dfn export>Mainteneur</dfn>
+- <dfn export>Data Pod</dfn>
+- <dfn export>Boîte de réception</dfn>
+- <dfn export>Journal des événements du cycle de vie de l'artefact</dfn>
+- <dfn export>Hub de services</dfn>
+- <dfn export>Politique</dfn>
+- <dfn export>Tableau de bord</dfn>
+
+Aperçu général {#high-level}
+=================================
+Un [=Data pod=] [=Solid=] est un espace de données personnel sur le Web.
+Un acteur peut utiliser cet espace de données pour stocker et partager des ressources sur le Web et recevoir des notifications d'autres acteurs dans un répertoire de ressources [=inbox=] annoncé.
+Pour suivre le cycle de vie et ses interactions des ressources publiées sur un data pod dans des réseaux décentralisés, une implémentation de data pod doit fournir une fonctionnalité pour le stockage et la découverte de ces événements pour leurs ressources respectives.
+Dans [](#resource-storage), nous définissons les exigences de base pour le stockage des ressources sur le réseau.
+Dans [](#resource-versioning), nous définissons comment la version des ressources peut être gérée sur le data pod.
+Dans [](#resource-events), les exigences sont définies pour le stockage et la découverte d'un Journal des événements pour une ressource donnée sur le data pod.
+Dans [](#notifications), l'exigence est définie pour que le data pod soit un Récepteur de [Linked Data Notification](https://www.w3.org/TR/ldn/).
+
+Création d'un data pod {#data-pod-creation}
+========================================
+Un data pod Solid DOIT être déployable en tant que <dfn export>processus local en arrière-plan</dfn> ou en tant que <dfn export>service Web distant</dfn>. 
+Dans le cas où un data pod est déployé en tant que processus local, l'instance du data pod doit être connectée au Web en permanence si le data pod doit être découvrable en permanence dans le réseau.
+Dans le cas de ce dernier, un acteur dans le réseau DOIT être en mesure de créer son propre data pod en utilisant ce service Web.
+
+Stockage des ressources {#resource-storage}
+====================================
+
+## indexation ## {#indexing}
+Toute ressource stockée sur le data pod doit être incluse dans un index sur le data pod pour permettre la découverte des ressources par des applications et des acteurs dans le réseau.
+Une première méthode d'indexation consiste à utiliser un [Type Index ](https://github.com/solid/solid/blob/main/proposals/data-discovery.md).
+En indexant les ressources dans un index de type public, les acteurs et les applications dans le réseau peuvent découvrir des ressources d'un type spécifique.
+Une deuxième méthode consiste à indexer les ressources à l'aide d'un [Arbre de Formes](https://shapetrees.org/).
+La spécification de l'arbre de formes définit où sont stockées les ressources correspondant à une forme spécifique sur le data pod.
+En analysant l'arbre de formes disponible, tout acteur ou application sur le réseau peut découvrir des ressources pour une forme spécifique.
+
+## métadonnées ## {#metadata}
+Le stockage des métadonnées des ressources pour les ressources non RDF est souhaitable sur une implémentation de Solid Pod.
+Les métadonnées des ressources peuvent être ajoutées aux ressources non RDF en créant une ressource avec l'extension .meta, conformément à la [spécification Solid](https://github.com/solid/solid-spec).
+
+Version des ressources (Resource Versioning) {#resource-versioning}
+==========================================
+Le data pod peut fournir une fonctionnalité pour prendre en charge la version des ressources stockées.
+La prise en charge d'une telle version n'est pas intégrée à la spécification Solid.
+La version des ressources dans un environnement Solid pod peut être mise en œuvre selon la définition de la [spécification de l'API Fedora](https://fedora.info/2021/05/01/spec/#resource-versioning) qui est basée sur le protocole [=memento=].
+Dans les cas où il est important de pouvoir faire référence à des versions spécifiques d'une ressource, la version peut être gérée en générant une nouvelle URI pour différentes versions de ressource.
+Le lien de version peut être géré en utilisant le vocabulaire DCAT, en ajoutant les informations de version directement à la ressource dans le cas d'une ressource RDF, ou à la ressource de métadonnées dans le cas de ressources non RDF.
+
+
+Événements liés à la ressource (Resource Event Information) {#resource-events}
+=============================================
+Le data pod peut fournir une fonctionnalité pour stocker des données d'[Événement](#) liées aux ressources stockées sur le data pod.
+Pour fournir cette fonctionnalité, le data pod doit implémenter la spécification [Journal des événements](/spec-eventlog/).
+Cette spécification dicte comment les données liées aux événements doivent être stockées sur le data pod et comment elles peuvent être découvertes par des acteurs externes dans le réseau.
+
+Notifications {#notifications}
+=============================
+Dans l'écosystème Solid, les notifications servent de principal mécanisme de communication dans un réseau de Solid Pods.
+Ces notifications suivent la [Spécification des Notifications Linked Data](https://www.w3.org/TR/ldn/) (LDN).
+Chaque pod Solid dans le réseau sert de [=Récepteur=] LDN et a donc la capacité de recevoir des notifications de n'importe quel acteur dans le réseau.
+En définissant une boîte de réception sur une ressource, les notifications pour différentes ressources peuvent être dirigées vers différentes boîtes de réception définies sur le data pod.
+L'acteur gérant le pod Solid peut choisir de traiter manuellement les notifications entrantes ou d'automatiser ce processus via un service externe d'[Orchestrateur](#).
+Une Notification Linked Data n'a aucune garantie de réponse ou d'action.
+Toute action requise lors de la réception de notifications spécifiques doit être définie et appliquée séparément.
+
+Feuille de route de la spécification {#roadmap}
+====================================
+## Septembre ## {#roadmap-septembre}
+
+1. Travailler sur les exigences de version des ressources dans Solid.
+	- La version basée sur le temps est-elle utile pour nos cas d'utilisation ?
+	- Quelle est la meilleure approche pour l'étiquetage des versions pour des ressources spécifiques et leur découverte ?
+	- Comment pouvons-nous nous assurer que les événements peuvent être étiquetés pour des versions spécifiques de ressources, même sur des acteurs distants ?
+
+2. Approfondir la découverte des données.
+	- Travailler sur les exigences pour les arbres de formes selon la spécification d'interopérabilité.
+
+<pre class=biblio>
+{
+	"solid-oidc": {
+		"authors": [
+			"Aaron Coburn (Inrupt)",
+			"elf Pavlik",
+			"Dmitri Zagidulin"
+		],
+		"href": "https://solid.github.io/authentication-panel/solid-oidc/",
+		"title": "SOLID-OIDC",
+		"status": "Brouillon de l'éditeur",
+		"éditeur": "Projet Solid",
+		"deliveredBy": [
+			"https://www.w3.org/community/solid/"
+		]
+	},
+	"solid-protocol": {
+		"authors": [
+			"Sarven Capadisli",
+			"Tim Berners-Lee",
+			"Ruben Verborgh",
+			"Kjetil Kjernsmo",
+			"Justin Bingham",
+			"Dmitri Zagidulin"
+		],
+		"href": "https://solidproject.org/TR/protocol/",
+		"title": "Le protocole Solid",
+		"status": "Brouillon de l'éditeur",
+		"éditeur": "Projet Solid",
+		"deliveredBy": [
+			"https://www.w3.org/community/solid/"
+		]
+	},
+	"spec-overview": {
+		"authors": [
+		"Miel Vander Sande"
+	 ],
+		"href": "http://mellonscholarlycommunication.github.io/spec-overview/",
+		"title": "Vue d'ensemble des spécifications du projet ResearcherPod",
+		"status": "Brouillon de l'éditeur",
+		"éditeur": "Projet ResearcherPod"
+	}
+}
+</pre>
+
+# Remerciements
+
+Nous remercions Herbert Van de Sompel, [DANS + Université de Gand](https://dans.knaw.nl/nl/), hvdsomp@gmail.com
+pour sa précieuse contribution lors de ce projet.
